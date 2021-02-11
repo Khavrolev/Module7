@@ -6,11 +6,11 @@ namespace ConsoleApp1
     {
         static void Main(string[] args)
         {
-            Ball ball = new Ball("Adidas", 2000, 5);
+            Ball ball = new Ball("Molten FIBA GR7", 2000, new double[] { 4.5, 2.7 }, 5);
             string str = ball.ShowDescription();
             Console.WriteLine(str);
 
-            Sneakers sneakers = new Sneakers("Jordan", 6000, "красные");
+            Sneakers sneakers = new Sneakers("Jordan Why Not?", 6000, new double[] { 2.5, 1.7 }, "красные");
             str = sneakers.ShowDescription();
             Console.WriteLine(str);
 
@@ -38,82 +38,92 @@ namespace ConsoleApp1
         /* ... */
     }
 
-    abstract class Product
+    abstract class Product //продукт
     {
-        private string type;
+        private string type; //тип продукта
         public string Type
         {
             get
             { return type; }
-
-            set
-            { type = value; }
         }
-        private string name;
+        private string name; //имя продукта
         public string Name
         {
             get
             { return name; }
-
-            set
-            { name = value; }
         }
-        private double price;
+        private double price; //цена продукта
         public double Price
         {
             get
             { return price; }
-
-            set
-            { price = value; }
         }
+        private protected Characteristics characteristics;
 
-        public Product(string type, string name, double price)
+        public Product(string type, string name, double price, double[] characteristics)
         {
             this.type = type;
             this.name = name;
             this.price = price;
+            this.characteristics = new Characteristics(characteristics[0], characteristics[1]);
         }
 
-        public abstract string ShowDescription();
+        public abstract string ShowDescription(); //метод получения описания продукта
     }
 
-    class Ball : Product
+    class Characteristics //физические характеристики продукта
     {
-        private int size;
+        private double weightProduct; //вес продукта
+        private double weightPack; //вес упаковки
+
+        public Characteristics(double weightProduct, double weightPack)
+        {
+            this.weightProduct = weightProduct;
+            this.weightPack = weightPack;
+        }
+
+        public double GetWeight() //метод, возвращающий общий вес продукта, который будет доставляться
+        {
+            return weightProduct + weightPack;
+        }
+    }
+
+    class Ball : Product //мяч
+    {
+        private int size; //размер мяча
         public int Size
         {
             get { return size; }
-            set { size = value; }
+
         }
-        public Ball(string name, double price, int size) : base("Мяч", name, price)
+        public Ball(string name, double price, double[] characteristics, int size) : base("Мяч", name, price, characteristics)
         {
             this.size = size;
         }
 
         public override string ShowDescription()
         {
-            return String.Format("{0}. {1}. Стоимость - {2} рублей (Размер - {3})", base.Type, base.Name, base.Price, this.size);
-        }
+            return String.Format("{0}. {1}. Стоимость - {2} рублей (Размер - {3}, вес - {4})", base.Type, base.Name, base.Price, this.size, base.characteristics.GetWeight());
+        } //метод получения описания продукта
+
     }
 
-    class Sneakers : Product
+    class Sneakers : Product //кроссовки
     {
-        private string color;
+        private string color; //цвет кроссовок
         public string Color
         {
             get { return color; }
-            set { color = value; }
         }
-        public Sneakers(string name, double price, string color) : base("Кроссовки", name, price)
+        public Sneakers(string name, double price, double[] characteristics, string color) : base("Кроссовки", name, price, characteristics)
         {
             this.color = color;
         }
 
         public override string ShowDescription()
         {
-            return String.Format ("{0}. {1}. Стоимость - {2} рублей (Цвет - {3})", base.Type, base.Name, base.Price, this.color);
-        }
+            return String.Format("{0}. {1}. Стоимость - {2} рублей (Цвет - {3}, вес - {4})", base.Type, base.Name, base.Price, this.color, base.characteristics.GetWeight());
+        } //метод получения описания продукта
     }
 
     class Order<TDelivery, TStruct> where TDelivery : Delivery

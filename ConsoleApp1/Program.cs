@@ -18,8 +18,10 @@ namespace ConsoleApp1
             order.DisplayInfo();
             CommonClass.DisplayHomeDelivery<SDEK>((Delivery)homeDelivery, sdek);
             CommonClass.DisplayHomeDelivery<DPD>((Delivery)homeDelivery, dpd);
-            double price = ((Product)ball1).GetPrice();
-            Console.WriteLine(price);
+            double price1 = ((Product)ball1).GetPrice();
+            Console.WriteLine("Цена при помощи метода расширения {0}", price1);
+            double price2 = ball1 + ball2;
+            Console.WriteLine("Цена первых двух мячей при помощи перегружения оператора {0}", price2);
 
             Console.ReadKey();
         }
@@ -35,7 +37,7 @@ namespace ConsoleApp1
             else
                 Console.WriteLine(String.Format("Служба доставки {0} не доставляет посылки на дом", service.Name));
         }
-    }
+    } //статический класс для пары методов
 
     abstract class Service
     {
@@ -84,7 +86,7 @@ namespace ConsoleApp1
             flag = true;
             return flag;
         } //доставляет ли на дом
-    }
+    } //СДЭК
 
     class DPD : Service
     {
@@ -106,7 +108,7 @@ namespace ConsoleApp1
             flag = false;
             return flag;
         } //доставляет ли на дом
-    }
+    } //ДПД
 
     abstract class Delivery
     {
@@ -121,7 +123,7 @@ namespace ConsoleApp1
         {
             this.address = address;
         }
-    }
+    } //способ заказа
 
     class HomeDelivery : Delivery
     {
@@ -134,7 +136,7 @@ namespace ConsoleApp1
         {
             this.recipient = recipient;
         }
-    }
+    } //заказ на дом
 
     class PickPointDelivery : Delivery
     {
@@ -147,7 +149,7 @@ namespace ConsoleApp1
         {
             this.cell = cell;
         }
-    }
+    } //заказ в точку выдачи
 
     class ShopDelivery : Delivery
     {
@@ -160,7 +162,7 @@ namespace ConsoleApp1
         {
             this.isPartner = isPartner;
         }
-    }
+    } //заказ в магазине
 
     abstract class Product //продукт
     {
@@ -193,6 +195,11 @@ namespace ConsoleApp1
         }
 
         public abstract string ShowDescription(); //метод получения описания продукта
+
+        public static double operator + (Product a, Product b)
+        {
+            return a.Price + b.Price;
+        }
     }
 
     static class ProductExtensions
@@ -201,7 +208,7 @@ namespace ConsoleApp1
         {
             return product.Price;
         }
-    }
+    } //расширение для продукта, которое выдаёт цену
 
     class ProductCollection<TProduct> where TProduct : Product
     {
@@ -276,7 +283,6 @@ namespace ConsoleApp1
         {
             return String.Format("{0}. {1}. Стоимость - {2} рублей (Размер - {3}, вес - {4})", base.Type, base.Name, base.Price, this.size, base.characteristics.GetWeight());
         } //метод получения описания продукта
-
     } //мяч
 
     class Sneakers : Product
@@ -351,5 +357,5 @@ namespace ConsoleApp1
             else
                 Console.WriteLine("Извините, {0}, Вы слишком далеко, служба доставки {1} не может доставить товар", client.Name, service.Name);
         }
-    }
+    } //главный класс, который собирает заказ
 }
